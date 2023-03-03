@@ -1,5 +1,8 @@
 {
-  "name": "unitestingtask",
+  "name": "unit-testing-task",
+  "jest": {
+    "transform": {}
+  },
   "version": "0.0.1",
   "description": "Unit testing task",
   "scripts": {
@@ -7,9 +10,10 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.20.7",
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
-    "babel-jest": "^29.4.1",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^29.4.3",
     "jest": "^29.4.1"
   },
   "dependencies": {
