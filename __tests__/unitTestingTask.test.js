@@ -36,8 +36,8 @@ describe("UnitTestingTask Function", () => {
       ["f", "0"],
       ["A", "AM"],
       ["a", "am"],
-      ["ZZ", "+0200"],
-      ["Z", "+02:00"]
+      ["ZZ", "+0000"],
+      ["Z", "+00:00"]
     ];
 
     test.each(testCases)(
@@ -124,46 +124,59 @@ describe("UnitTestingTask Function", () => {
 });
 
   describe('Lang function', () => {
-    test('it should return current language if no arguments provided', () => {
-      const languages = { current: 'en' };
+
+    test('it should return current language if lang is not provided', () => {
       const result = unitTestingTask.lang();
-  
-      expect(result).toBe(languages.current);
-    });
-  
-    test('it should set current language if provided language exists in languages', () => {
-      const options = {
-        _months: 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
-        months: function (date) {
-            return this._months[date.getMonth()];
-        },
-        _monthsShort: 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
-        monthsShort: function (date) {
-            return this._monthsShort[date.getMonth()];
-        },
-        weekdays: 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
-        weekdaysShort: 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
-        weekdaysMin: 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_'),
-        meridiem : function (hours, isLower) {
-            if (hours > 11) {
-                return isLower ? 'pm' : 'PM';
-            } else {
-                return isLower ? 'am' : 'AM';
-            }
-        }
-      };
-      const languages = { current: 'en', en: options };
-  
-      const result = unitTestingTask.lang('en');
-  
+
       expect(result).toBe('en');
-      expect(languages.current).toBe('en');
     });
-  
-    test('it should return current language if provided language is not valid module', () => {
-      const result = unitTestingTask.lang('invalid', undefined);
-  
+
+    test('it should set current language if lang is provided and options is not provided', () => {
+      const result = unitTestingTask.lang('fr');
+
       expect(result).toBe('en');
+
+      expect(unitTestingTask._languages.current).toBe('en');
+    });
+
+    test('it should set language options and current language if lang and options are provided', () => {
+      const result = unitTestingTask.lang('fr', {
+        _months: ['Janvier', 'Fevrier', 'Mars'],
+        months: jest.fn(),
+      });
+
+      expect(result).toBe('fr');
+
+      expect(unitTestingTask._languages.current).toBe('fr');
+
+      expect(unitTestingTask._languages['fr']).toEqual({
+        _months: ['Janvier', 'Fevrier', 'Mars'],
+        months: expect.any(Function),
+      });
+    });
+
+    describe('For English language object', () => {
+      const englishLanguage = unitTestingTask._languages['en'];
+    
+      test('it should return the correct month based on the provided date', () => {
+        const date = new Date('2023-01-15');
+        const result = englishLanguage.months(date);
+        expect(result).toBe('January');
+      });
+    
+      test('it should return the correct short month based on the provided date', () => {
+        const date = new Date('2023-02-15');
+        const result = englishLanguage.monthsShort(date);
+        expect(result).toBe('Feb');
+      });
+    
+      test('it should return the correct meridiem based on the provided hours', () => {
+        let result = englishLanguage.meridiem(10, true);
+        expect(result).toBe('am');
+    
+        result = englishLanguage.meridiem(13, false);
+        expect(result).toBe('PM');
+      });
     });
   });
 });

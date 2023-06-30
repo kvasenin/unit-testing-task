@@ -1,8 +1,5 @@
 {
   "name": "unit-testing-task",
-  "jest": {
-    "transform": {}
-  },
   "version": "0.0.1",
   "description": "Unit testing task",
   "scripts": {
