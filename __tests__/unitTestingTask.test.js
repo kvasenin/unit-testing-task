@@ -8,9 +8,10 @@ describe("Test", () => {
 });
 
 describe("UnitTestingTask Function", () => {
+  const UtcDate = timezonedDate.makeConstructor(0);
 
   describe("Tokens", function () {
-    const date = new Date("March 3, 2023 03:24:00");
+    const date = new UtcDate("March 3, 2023 03:24:00");
 
     const testCases = [
       ["YYYY", "2023"],
@@ -49,15 +50,17 @@ describe("UnitTestingTask Function", () => {
 });
 
   describe("LeadingZeroes", () => {
+    const date = new UtcDate("March 3, 2023 03:24:00");
+
     const testCases = [
-      { args: ["dd", "1"], expected: "01" },
-      { args: ["ff","0"], expected: "000" },
-      { args: ["d","01"], expected: "1" }
+      { args: ["dd", date], expected: "03" },
+      { args: ["ff", date], expected: "000" },
+      { args: ["d", date], expected: "3" }
     ];
 
     testCases.forEach(({ args, expected }) => {
       test(`it should convert '${args[1]}' string and pad it with leading zeroes until resulting string reaches '${args[0]}' token value`, () => {
-        expect(unitTestingTask(...args)).toEqual(expected);
+        expect(unitTestingTask(args[0], args[1])).toEqual(expected);
       });
     });
   });
@@ -66,7 +69,7 @@ describe("UnitTestingTask Function", () => {
     let originalDate;
   
     beforeEach(() => {
-      originalDate = new Date("2023-05-04T13:45:00Z");;
+      originalDate = new UtcDate("2023-05-04T13:45:00Z");;
     });
   
     describe("for different Timezones", function () {
@@ -159,13 +162,13 @@ describe("UnitTestingTask Function", () => {
       const englishLanguage = unitTestingTask._languages['en'];
     
       test('it should return the correct month based on the provided date', () => {
-        const date = new Date('2023-01-15');
+        const date = new UtcDate('2023-01-15');
         const result = englishLanguage.months(date);
         expect(result).toBe('January');
       });
     
       test('it should return the correct short month based on the provided date', () => {
-        const date = new Date('2023-02-15');
+        const date = new UtcDate('2023-02-15');
         const result = englishLanguage.monthsShort(date);
         expect(result).toBe('Feb');
       });
